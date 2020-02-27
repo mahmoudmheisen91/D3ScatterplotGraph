@@ -1,0 +1,25 @@
+/* Global Variables */
+$mCol: rgb(243, 33, 33);
+
+/* Setup */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Apply a natural box layout model to all elements, 
+but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+
+*,
+::before,
+::after {
+  box-sizing: inherit;
+}
+
+header {
+  color: $mCol;
+}

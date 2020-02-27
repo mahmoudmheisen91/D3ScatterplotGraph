@@ -1,0 +1,25 @@
+/* Global Variables */
+/* Setup */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Apply a natural box layout model to all elements, 
+but allowing components to change */
+html {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+*,
+::before,
+::after {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+}
+
+header {
+  color: #f32121;
+}
