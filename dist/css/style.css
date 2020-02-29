@@ -23,3 +23,14 @@ html {
 header {
   color: #f32121;
 }
+
+.svg-graph {
+  border: 2px solid black;
+}
+
+.grid {
+  stroke: grey;
+  stroke-dashoffset: 1px;
+  stroke-dasharray: 2 2;
+  opacity: 0.6;
+}
