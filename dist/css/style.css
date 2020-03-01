@@ -41,5 +41,15 @@ header {
 }
 
 .dot:hover {
-  fill: green;
+  fill: #19b319;
+}
+
+#tooltip {
+  position: absolute;
+  display: none;
+  padding: 12px;
+  font-size: 12px;
+  background: #a3d8a3;
+  border-radius: 10px;
+  pointer-events: none;
 }
