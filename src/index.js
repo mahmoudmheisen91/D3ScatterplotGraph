@@ -33,22 +33,6 @@ let parseData = data => {
   return data_set;
 };
 
-function make_x_axis() {
-  return d3.svg
-    .axis()
-    .scale(x)
-    .orient("bottom")
-    .ticks(5);
-}
-
-function make_y_axis() {
-  return d3.svg
-    .axis()
-    .scale(y)
-    .orient("left")
-    .ticks(5);
-}
-
 /**
  * Creates a scatterplot graph using D3.js
  * @param {object} data Object containing doping data of bicylce racing
@@ -87,7 +71,7 @@ let drawScatterPlot = data => {
       .attr("transform", `translate(${margin.horizantal},0)`)
       .call(d3.axisLeft(yScale).tickFormat(d3.timeFormat("%M:%S")));
 
-  // SVG:
+  // Create SVG:
   let svg = d3
     .select(".vis-container")
     .append("svg")
@@ -95,11 +79,11 @@ let drawScatterPlot = data => {
     .attr("width", width)
     .attr("height", height);
 
-  // Apend Axes:
+  // Append Axes:
   svg.append("g").call(xAxis);
   svg.append("g").call(yAxis);
 
-  // GridLines:
+  // Append GridLines:
   let xGridLine = svg
     .selectAll("line.Grid")
     .data(xScale.ticks(10))
@@ -124,7 +108,9 @@ let drawScatterPlot = data => {
     .attr("y2", d => yScale(d))
     .attr("fill", "none");
 
-  // Main PLot:
+  // Append Main PLot:
+  let color = d3.scaleOrdinal(d3.schemeSet1);
+
   let scatterPlot = svg
     .selectAll("circle")
     .data(data)
@@ -134,11 +120,19 @@ let drawScatterPlot = data => {
     .attr("r", 6)
     .attr("cx", d => xScale(d.Year))
     .attr("cy", d => yScale(d.Time))
-    .attr("fill", d => (d.Doping ? "red" : "green"))
+    .attr("fill", d => color(+d.Doping))
     .attr("stroke", "black")
     .attr("stroke-width", 2);
 
-  // Labels
+  // Title
+  let title = svg
+    .append("text")
+    .attr("id", "title")
+    .attr("x", width / 2)
+    .attr("y", margin.vertical / 2)
+    .text("Doping in Bicycle Racing");
+
+  // Append Labels
   let xLabel = svg
     .append("text")
     .attr("class", "xlabel")
@@ -153,4 +147,35 @@ let drawScatterPlot = data => {
     .attr("x", -250)
     .attr("y", 100)
     .text("Time (Minutes)");
+
+  // Legend:
+  let legend = svg
+    .selectAll(".legend")
+    .data(color.domain())
+    .enter()
+    .append("g")
+    .attr("class", "legend")
+    .attr("id", "legend")
+    .attr("transform", (d, i) => "translate(0," + (height / 2 - i * 20) + ")");
+
+  legend
+    .append("rect")
+    .attr("x", width - 1.25 * margin.horizantal + 10)
+    .attr("width", 20)
+    .attr("height", 20)
+    .attr("fill", color)
+    .attr("stroke", "white");
+
+  legend
+    .append("text")
+    .attr("x", width - 1.25 * margin.horizantal)
+    .attr("y", 10)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text(function(d) {
+      if (d) return "Doping";
+      else {
+        return "No Doping";
+      }
+    });
 };

@@ -34,3 +34,12 @@ header {
   stroke-dasharray: 2 2;
   opacity: 0.6;
 }
+
+#title {
+  font-size: 28px;
+  text-anchor: middle;
+}
+
+.dot:hover {
+  fill: green;
+}
