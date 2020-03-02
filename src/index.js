@@ -130,8 +130,8 @@ let drawScatterPlot = data => {
     .select(".vis-container")
     .append("svg")
     .attr("class", "svg-graph")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("viewBox", [0, 0, width, height])
+    .attr("preserveAspectRatio", "xMidYMid meet");
 
   // Append Axes:
   svg.append("g").call(xAxis);
@@ -190,22 +190,6 @@ let drawScatterPlot = data => {
     .attr("x", width / 2)
     .attr("y", margin.vertical / 2)
     .text("Doping in Bicycle Racing");
-
-  // Append Labels
-  // let xLabel = svg
-  //   .append("text")
-  //   .attr("class", "xlabel")
-  //   .attr("x", 1000)
-  //   .attr("y", 570)
-  //   .text("Year");
-
-  // let yLabel = svg
-  //   .append("text")
-  //   .attr("class", "ylabel")
-  //   .attr("transform", "rotate(-90)")
-  //   .attr("x", -250)
-  //   .attr("y", 100)
-  //   .text("Time (Minutes)");
 
   // Legend:
   let legend = svg

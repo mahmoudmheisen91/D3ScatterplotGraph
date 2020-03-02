@@ -1,5 +1,5 @@
 /* Global Variables */
-$green: rgb(23, 228, 57);
+$mColor: rgb(23, 228, 57);
 $ftSize: 1.5rem;
 
 /* Setup */
@@ -17,7 +17,7 @@ footer {
   margin: 5px;
   padding: 5px;
   border-radius: 10px;
-  background-color: $green;
+  background-color: $mColor;
   text-align: center;
   font-size: $ftSize;
   font-weight: bold;
