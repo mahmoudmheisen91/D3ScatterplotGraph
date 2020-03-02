@@ -1,27 +1,30 @@
 /* Global Variables */
 /* Setup */
-html,
-body {
+*,
+::before,
+::after {
   margin: 0;
   padding: 0;
-}
-
-/* Apply a natural box layout model to all elements, 
-but allowing components to change */
-html {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
 
-*,
-::before,
-::after {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
+header,
+footer {
+  position: relative;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: #17e439;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-header {
-  color: #f32121;
+footer {
+  border-radius: 5px;
+  text-align: right;
+  font-size: 1.2rem;
 }
 
 .svg-graph {

@@ -1,27 +1,32 @@
 /* Global Variables */
-$mCol: rgb(243, 33, 33);
+$green: rgb(23, 228, 57);
+$ftSize: 1.5rem;
 
 /* Setup */
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
-/* Apply a natural box layout model to all elements, 
-but allowing components to change */
-html {
-  box-sizing: border-box;
-}
-
 *,
 ::before,
 ::after {
-  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-header {
-  color: $mCol;
+header,
+footer {
+  position: relative;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: $green;
+  text-align: center;
+  font-size: $ftSize;
+  font-weight: bold;
+}
+
+footer {
+  border-radius: 5px;
+  text-align: right;
+  font-size: 1.2rem;
 }
 
 .svg-graph {
