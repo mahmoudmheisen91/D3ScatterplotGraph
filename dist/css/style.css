@@ -15,7 +15,7 @@ footer {
   margin: 5px;
   padding: 5px;
   border-radius: 10px;
-  background-color: #f43efa;
+  background-color: #f56efa;
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
@@ -32,7 +32,7 @@ footer {
 }
 
 .svg-graph {
-  background-color: rgba(228, 23, 218, 0.082);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 #x-axis,
@@ -63,7 +63,7 @@ footer {
   display: none;
   padding: 12px;
   font-size: 14px;
-  background: #f700ff;
+  background: #f971fd;
   border-radius: 10px;
   pointer-events: none;
 }
@@ -74,7 +74,7 @@ footer {
 }
 
 .dot:hover {
-  fill: #f700ff;
+  fill: #f971fd;
 }
 
 #title {
