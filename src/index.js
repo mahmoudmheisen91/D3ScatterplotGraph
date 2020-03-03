@@ -16,23 +16,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Parse data into array of objects
+ * Parse data function
  * @param {object} data Object containing doping data of bicylce racing
- * data: {Year: Number, Time: Date, Doping: Boolean}
  */
 let parseData = data => {
-  let data_set = [];
-  data.map((item, index) => {
+  data.map(item => {
     let time = item.Time.split(":");
-    data_set[index] = {
-      Year: +item.Year,
-      Time: new Date(1970, 0, 1, 0, time[0], time[1]),
-      Doping: item.Doping,
-      Name: item.Name,
-      Nationality: item.Nationality
-    };
+    item.Time = new Date(1970, 0, 1, 0, time[0], time[1]);
+    item.Year = +item.Year;
+    item.Place = +item.Place;
+    item.Seconds = +item.Seconds;
   });
-  return data_set;
+  return data;
 };
 
 /**
@@ -41,88 +36,181 @@ let parseData = data => {
  * data: {Year: Number, Time: Date, Doping: Boolean}
  */
 let drawScatterPlot = data => {
+  // Globals:
   const width = 1200;
-  const height = 600;
+  const height = 500;
   const margin = {
-    vertical: 75,
-    horizantal: 150
+    top: 75,
+    right: 0,
+    bottom: 0,
+    left: 175
   };
+  let color = d3.scaleOrdinal(d3.schemeSet1);
+  let timeFormat = d3.timeFormat("%M:%S");
 
   // Scaleing:
   let xScale = d3
     .scaleLinear()
-    .domain([d3.min(data, d => d.Year - 2), d3.max(data, d => d.Year + 1)])
-    .range([margin.horizantal, width - margin.horizantal]);
+    .domain([d3.min(data, d => d.Year - 0), d3.max(data, d => d.Year + 0)])
+    .range([margin.right + margin.left, width - margin.right - margin.left]);
 
   let yScale = d3
     .scaleLinear()
     .domain([
-      d3.min(data, d => new Date(d.Time.getTime() - 0.5 * 60000)),
-      d3.max(data, d => new Date(d.Time.getTime() + 0.5 * 60000))
+      d3.min(data, d => new Date(d.Time.getTime() - 0.0 * 60000)),
+      d3.max(data, d => new Date(d.Time.getTime() + 0.0 * 60000))
     ])
-    .range([height - margin.vertical, margin.vertical]);
+    .range([height - margin.top - margin.bottom, margin.top + margin.bottom]);
 
   // Axes:
   let xAxis = g =>
     g
-      .attr("transform", `translate(0,${height - margin.vertical})`)
+      .attr("id", "x-axis")
+      .attr("transform", `translate(0, ${height - margin.top - margin.bottom})`)
       .call(d3.axisBottom(xScale).tickFormat(d3.format("d")))
       .call(g =>
         g
           .append("text")
-          .attr("class", "xlabel")
-          .attr("x", width - margin.horizantal)
-          .attr("y", margin.vertical * 0.5)
-          .attr("fill", "currentColor")
-          .attr("text-anchor", "end")
+          .attr("class", "x-label")
+          .attr("x", width - (margin.right + margin.left))
+          .attr("y", (margin.top + margin.bottom) * 0.5)
           .text("Year")
       );
 
   let yAxis = g =>
     g
-      .attr("transform", `translate(${margin.horizantal},0)`)
+      .attr("id", "y-axis")
+      .attr("transform", `translate(${margin.right + margin.left}, 0)`)
       .call(d3.axisLeft(yScale).tickFormat(d3.timeFormat("%M:%S")))
       .call(g => g.select(".domain").remove())
       .call(g =>
         g
           .append("text")
-          .attr("class", "ylabel")
+          .attr("class", "y-label")
           .attr("transform", "rotate(-90)")
-          .attr("x", -margin.horizantal * 0.5)
-          .attr("y", -margin.vertical * 0.75)
-          .attr("fill", "currentColor")
-          .attr("text-anchor", "end")
+          .attr("x", -(margin.right + margin.left) * 0.5)
+          .attr("y", -(margin.top + margin.bottom) * 0.75)
           .text("Time (Minutes)")
       );
 
-  // Grid:
+  // Gridlines:
   let grid = g =>
     g
       .call(g =>
         g
           .append("g")
           .selectAll("line")
-          .data(xScale.ticks())
+          .data(xScale.ticks(20))
           .enter()
           .append("line")
-          .attr("class", "grid")
+          .attr("class", "grid-line")
           .attr("x1", d => xScale(d))
           .attr("x2", d => xScale(d))
-          .attr("y1", margin.vertical)
-          .attr("y2", height - margin.vertical)
+          .attr("y1", margin.top + margin.bottom)
+          .attr("y2", height - (margin.top + margin.bottom))
       )
       .call(g =>
         g
           .append("g")
           .selectAll("line")
-          .data(yScale.ticks())
+          .data(yScale.ticks(20))
           .enter()
           .append("line")
-          .attr("class", "grid")
-          .attr("x1", margin.horizantal)
-          .attr("x2", width - margin.horizantal)
+          .attr("class", "grid-line")
+          .attr("x1", margin.right + margin.left)
+          .attr("x2", width - (margin.right + margin.left))
           .attr("y1", d => yScale(d))
           .attr("y2", d => yScale(d))
+      );
+
+  // ToolTip:
+  let toolTip = d3
+    .select("main")
+    .append("div")
+    .attr("id", "tooltip");
+
+  // Main PLot:
+  let scatterPlot = g =>
+    g
+      .selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("class", "dot")
+      .attr("data-xvalue", d => d.Year)
+      .attr("data-yvalue", d => d.Time)
+      .attr("r", 6)
+      .attr("cx", d => xScale(d.Year))
+      .attr("cy", d => yScale(d.Time))
+      .attr("fill", d => color(!!d.Doping))
+      .on("mouseover", d => {
+        toolTip.style("display", "block");
+        toolTip.attr("data-year", d.Year);
+        toolTip
+          .html(
+            d.Name +
+              ", " +
+              d.Nationality +
+              ", " +
+              d.Place +
+              "<br/>" +
+              "Year: " +
+              d.Year +
+              ", Time: " +
+              timeFormat(d.Time) +
+              "<br/>" +
+              "Doping: " +
+              (d.Doping ? '"' + d.Doping + '"' : '"' + '"') +
+              "<br/>" +
+              "Seconds: " +
+              d.Seconds
+          )
+          .style("left", d3.event.pageX + "px")
+          .style("top", d3.event.pageY - 28 + "px");
+      })
+      .on("mouseout", d => {
+        toolTip.style("display", "none");
+      });
+
+  // Title:
+  let title = g =>
+    g.call(g =>
+      g
+        .append("text")
+        .attr("id", "title")
+        .attr("x", width / 2)
+        .attr("y", (margin.top + margin.bottom) / 2)
+        .text("Doping in Bicycle Racing")
+    );
+
+  // Legend:
+  let legend = g =>
+    g
+      .selectAll(".legend")
+      .data(color.domain())
+      .enter()
+      .append("g")
+      .attr("id", "legend")
+      .attr("transform", (d, i) => "translate(0," + (height / 2 - i * 20) + ")")
+      .call(g =>
+        g
+          .append("rect")
+          .attr("class", "legend-shape")
+          .attr("x", width - (margin.right + margin.left) + 10)
+          .attr("width", 120)
+          .attr("height", 20)
+          .attr("fill", color)
+          .attr("stroke", "white")
+      )
+      .call(g =>
+        g
+          .append("text")
+          .attr("class", "legend-text")
+          .attr("x", width - (margin.right + margin.left) * 0.3)
+          .attr("y", 10)
+          .attr("dy", ".35em")
+          .style("text-anchor", "end")
+          .text(d => (d ? "Doping" : "No Doping"))
       );
 
   // Create SVG:
@@ -133,87 +221,11 @@ let drawScatterPlot = data => {
     .attr("viewBox", [0, 0, width, height])
     .attr("preserveAspectRatio", "xMidYMid meet");
 
-  // Append Axes:
+  // Append:
   svg.append("g").call(xAxis);
   svg.append("g").call(yAxis);
   svg.append("g").call(grid);
-
-  // ToolTip:
-  let toolTip = d3
-    .select("main")
-    .append("div")
-    .attr("id", "tooltip");
-
-  // Append Main PLot:
-  let color = d3.scaleOrdinal(d3.schemeSet1);
-
-  let scatterPlot = svg
-    .selectAll("circle")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("class", "dot")
-    .attr("r", 6)
-    .attr("cx", d => xScale(d.Year))
-    .attr("cy", d => yScale(d.Time))
-    .attr("fill", d => color(!!d.Doping))
-    .attr("stroke", "black")
-    .attr("stroke-width", 2)
-    .on("mouseover", d => {
-      toolTip.style("display", "block");
-      // toolTip.attr("data-year", d.Year);
-      toolTip
-        .html(
-          d.Name +
-            ": " +
-            d.Nationality +
-            "<br/>" +
-            "Year: " +
-            d.Year +
-            ", Time: " +
-            d3.timeFormat("%M:%S")(d.Time) +
-            "<br/>" +
-            "Doping: " +
-            (d.Doping ? '"' + d.Doping + '"' : '"' + '"')
-        )
-        .style("left", d3.event.pageX + "px")
-        .style("top", d3.event.pageY - 28 + "px");
-    })
-    .on("mouseout", d => {
-      toolTip.style("display", "none");
-    });
-
-  // Title
-  let title = svg
-    .append("text")
-    .attr("id", "title")
-    .attr("x", width / 2)
-    .attr("y", margin.vertical / 2)
-    .text("Doping in Bicycle Racing");
-
-  // Legend:
-  let legend = svg
-    .selectAll(".legend")
-    .data(color.domain())
-    .enter()
-    .append("g")
-    .attr("class", "legend")
-    .attr("id", "legend")
-    .attr("transform", (d, i) => "translate(0," + (height / 2 - i * 20) + ")");
-
-  legend
-    .append("rect")
-    .attr("x", width - 1.25 * margin.horizantal + 10)
-    .attr("width", 20)
-    .attr("height", 20)
-    .attr("fill", color)
-    .attr("stroke", "white");
-
-  legend
-    .append("text")
-    .attr("x", width - 1.25 * margin.horizantal)
-    .attr("y", 10)
-    .attr("dy", ".35em")
-    .style("text-anchor", "end")
-    .text(d => (d ? "Doping" : "No Doping"));
+  svg.append("g").call(scatterPlot);
+  svg.append("g").call(title);
+  svg.append("g").call(legend);
 };

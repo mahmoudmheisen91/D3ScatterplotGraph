@@ -1,5 +1,8 @@
 /* Global Variables */
-$mColor: rgb(23, 228, 57);
+$mColor: rgb(244, 62, 250);
+$sColor: rgb(22, 1, 78);
+$s2Color: rgba(228, 23, 218, 0.082);
+$s3Color: rgb(247, 0, 255);
 $ftSize: 1.5rem;
 
 /* Setup */
@@ -29,32 +32,70 @@ footer {
   font-size: 1.2rem;
 }
 
-.svg-graph {
-  border: 2px solid black;
+.vis-container {
+  opacity: 1;
 }
 
-.grid {
-  stroke: grey;
+.svg-graph {
+  background-color: $s2Color;
+}
+
+#x-axis,
+#y-axis {
+  stroke: $sColor;
+  stroke-width: 0.5px;
+}
+
+.x-label,
+.y-label {
+  fill: currentColor;
+  text-anchor: end;
+  font-size: 0.8rem;
+  color: $sColor;
+}
+
+.grid-line {
+  stroke: $sColor;
   stroke-dashoffset: 1px;
   stroke-dasharray: 2 2;
   opacity: 0.6;
 }
 
-#title {
-  font-size: 28px;
-  text-anchor: middle;
+#tooltip {
+  position: absolute;
+  max-width: 250px;
+  word-wrap: break-word;
+  display: none;
+  padding: 12px;
+  font-size: 14px;
+  background: $s3Color;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.dot {
+  stroke: $sColor;
+  stroke-width: 2px;
 }
 
 .dot:hover {
-  fill: rgb(25, 179, 25);
+  fill: $s3Color;
 }
 
-#tooltip {
-  position: absolute;
-  display: none;
-  padding: 12px;
-  font-size: 12px;
-  background: rgb(163, 216, 163);
-  border-radius: 10px;
-  pointer-events: none;
+#title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-anchor: middle;
+}
+
+#legend {
+  opacity: 1;
+}
+
+.legend-shape {
+  opacity: 1;
+}
+
+.legend-text {
+  font-weight: bold;
 }
