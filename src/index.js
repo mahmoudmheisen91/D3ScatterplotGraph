@@ -165,8 +165,8 @@ let drawScatterPlot = data => {
               "Seconds: " +
               d.Seconds
           )
-          .style("left", d3.event.pageX + "px")
-          .style("top", d3.event.pageY - 28 + "px");
+          .style("left", d3.event.pageX + 20 + "px")
+          .style("top", d3.event.pageY - 20 + "px");
       })
       .on("mouseout", d => {
         toolTip.style("display", "none");
